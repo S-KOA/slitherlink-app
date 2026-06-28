@@ -1,0 +1,10 @@
+build/
+samples/
+
+*.o
+*.dylib
+*.so
+*.dll
+*.exe
+
+.DS_Store

@@ -6,13 +6,13 @@
 ## アーキテクチャ・技術スタック
  * **フロントエンド:** Flutter (Dart)
    * iOS/AndroidのクロスプラットフォームUI構築。
- * **ロジック:** C++ (Native C++)
+ * **ロジック:** C (Native C)
    * 独自の解法・生成アルゴリズムの実行。
    * Flutterとは dart:ffi を介して連携する。
  * **バックエンド:** Firebase
    * Firestore によるパズルデータの保存・共有、Firebase Auth によるユーザー認証を行う。
 ## 主要機能（予定）
-### 1. パズル自動生成機能
+### 1. パズル自動生成機能(進行中)  
  * C++ソルバーを利用し、指定サイズの「一意解を持つ」パズルをランダムに自動生成する。
 ### 2. パズルエディタ機能
  * 自動生成された盤面をベースとした編集機能。
@@ -35,3 +35,28 @@
  * **Phase 4: オンライン機能の統合**
    * Firebaseの導入（ユーザー認証、Firestore設計）。
    * パズルのアップロード、および一覧取得・プレイ機能の実装。
+
+## 現在のCコア構成
+
+```text
+include/   FFI公開APIヘッダ
+src/       ソルバー、生成器、汎用CLI
+tools/     生成専用CLI
+samples/   生成サンプル
+tests/     testcase
+build/     ビルド成果物
+```
+
+## 手元確認
+
+```bash
+make
+make check
+build/generate_puzzle 15 15 2 2026 growth 50
+build/slitherlink_cli --count 2 tests/testcase_7*7.txt
+build/slitherlink_cli --usage tests/testcase_7*7.txt
+```
+
+`growth` / `growth-preview` では最後の引数に `growth_bias` を指定できます。範囲は `0..100`、既定値は `50` です。
+
+`--usage` は solver が解く過程で使ったヒントを `1`、使わなかったヒントを `0` として出力します。これは「削除候補の一括フィードバック」であり、削除後の一意性を完全保証するものではありません。生成器では、この未使用候補を優先してから少数の一意解チェックをかける想定です。
